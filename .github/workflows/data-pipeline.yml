@@ -1,8 +1,11 @@
 name: Data Pipeline Workflow
 
 on:
+  workflow_dispatch:
+    
   schedule:
-    - cron: '0 * * * *'  # Runs at the start of every hour
+    - cron: '*/5 * * * *'  # This example runs every 3 minutes, adjust as needed
+    #- cron: '0 * * * *'  # Runs at the start of every hour
 
 jobs:
   data-pipeline:
@@ -21,12 +24,14 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install dvc_gdrive
 
     - name: Run data generation script
       run: python scripts/random_data.py
 
-    - name: Install DVC
-      run: pip install dvc
+    # - name: Install DVC with GDrive support
+    #   run: pip install 'dvc[gdrive]'
+    
 
     - name: DVC Pull
       run: dvc pull
