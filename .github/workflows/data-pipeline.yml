@@ -34,12 +34,14 @@ jobs:
     
 
     - name: DVC Pull
+      env:
+        GDRIVE_CREDENTIALS_DATA: ${{ secrets.GOOGLEDRIVE_SECRET }}
       run: dvc pull
 
     - name: Configure git with my information
       run: |
-        git config --global user.name "Abdul-Rehman04"
-        git config --global user.email "i191886@nu.edu.pk"
+        git config --global user.email "actions@github.com"
+        git config --global user.name "GitHub Actions"
 
     - name: DVC Add & Commit
       run: |
