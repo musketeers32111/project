@@ -1,0 +1,57 @@
+name: Data Pipeline Workflow
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Runs at the start of every hour
+
+jobs:
+  data-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run data generation script
+      run: python scripts/random_data.py
+
+    - name: Install DVC
+      run: pip install dvc
+
+    - name: DVC Pull
+      run: dvc pull
+
+    - name: Configure git with my information
+      run: |
+        git config --global user.name "Abdul-Rehman04"
+        git config --global user.email "i191886@nu.edu.pk"
+
+    - name: DVC Add & Commit
+      run: |
+        dvc add data/dummy_sensor_data.csv
+        git commit -m "Update data" data/dummy_sensor_data.csv.dvc
+
+    - name: DVC Push
+      run: dvc push
+
+    - name: Push changes to branch i191886
+      run: |
+        git push origin HEAD:i191886
+
+    - name: Open a Pull Request to main branch
+      uses: repo-sync/pull-request@v2
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        pr_title: "Update Data [Automated PR]"
+        pr_body: "This is an automated PR to update data files."
+        destination_branch: "main"
