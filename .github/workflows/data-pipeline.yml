@@ -56,9 +56,9 @@ jobs:
         GDRIVE_CREDENTIALS_DATA: ${{ secrets.GOOGLEDRIVE_SECRET }}
       run: dvc push
 
-    - name: Push changes to branch i191886
+    - name: Push changes to main
       run: |
-        git push origin HEAD:i191886
+        git push 
 
     - name: Open a Pull Request to main branch
       uses: repo-sync/pull-request@v2
