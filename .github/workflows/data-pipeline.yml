@@ -22,12 +22,13 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install 'dvc[gdrive]'
 
     - name: Run data generation script
       run: python scripts/random_data.py
 
-    - name: Install DVC with GDrive support
-      run: pip install 'dvc[gdrive]'
+    # - name: Install DVC with GDrive support
+    #   run: pip install 'dvc[gdrive]'
     
 
     - name: DVC Pull
