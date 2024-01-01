@@ -26,6 +26,11 @@ jobs:
         pip install -r requirements.txt
         pip install dvc_gdrive
 
+    - name: DVC Pull
+      env:
+        GDRIVE_CREDENTIALS_DATA: ${{ secrets.GOOGLEDRIVE_SECRET }}
+      run: dvc pull
+
     - name: Run data generation script
       run: python scripts/random_data.py
 
@@ -33,10 +38,7 @@ jobs:
     #   run: pip install 'dvc[gdrive]'
     
 
-    - name: DVC Pull
-      env:
-        GDRIVE_CREDENTIALS_DATA: ${{ secrets.GOOGLEDRIVE_SECRET }}
-      run: dvc pull
+
 
     - name: Configure git with my information
       run: |
