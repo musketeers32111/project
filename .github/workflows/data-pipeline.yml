@@ -1,6 +1,8 @@
 name: Data Pipeline Workflow
 
 on:
+  workflow_dispatch:
+    
   schedule:
     - cron: '*/5 * * * *'  # This example runs every 3 minutes, adjust as needed
     #- cron: '0 * * * *'  # Runs at the start of every hour
