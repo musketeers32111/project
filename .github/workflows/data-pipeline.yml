@@ -52,6 +52,8 @@ jobs:
         git commit -m "Update data" data/dummy_sensor_data.csv.dvc
 
     - name: DVC Push
+      env:
+        GDRIVE_CREDENTIALS_DATA: ${{ secrets.GOOGLEDRIVE_SECRET }}
       run: dvc push
 
     - name: Push changes to branch i191886
