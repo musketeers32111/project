@@ -81,9 +81,9 @@ jobs:
     - name: DVC Add & Commit
       run: |
         dvc add data/dummy_sensor_data.csv
-        git add .
-        git commit -m "Update data" data/dummy_sensor_data.csv.dvc
-        git push
+        git add data/dummy_sensor_data.csv.dvc
+        git commit -m "Update data with DVC" || echo "No changes to commit"
+        
 
     - name: DVC Push
       env:
