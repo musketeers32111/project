@@ -41,6 +41,27 @@ jobs:
       run: |
         python test.py new_model_metrics.json
 
+    - name: Calculate and log metrics difference
+      run: |
+          OLD_METRICS=$(cat $OLD_METRICS_FILE_PATH)
+          NEW_METRICS=$(cat $NEW_METRICS_FILE_PATH)
+          METRICS_DIFFERENCE=$(python -c "import json; old_metrics = json.loads('''$OLD_METRICS'''); new_metrics = json.loads('''$NEW_METRICS'''); metrics_difference = {key: new_metrics[key] - old_metrics.get(key, 0) for key in new_metrics}; print(json.dumps(metrics_difference))")
+              
+          # Get the current date in the format YYYY-MM-DD
+          CURRENT_DATE=$(date +"%Y-%m-%d")
+          
+          # Log the metrics difference with the current date
+          echo "Date: $CURRENT_DATE, Metrics Difference: $METRICS_DIFFERENCE" >> metrics_difference.log
+          cat metrics_difference.log
+  
+      env:
+            OLD_METRICS_FILE_PATH: current_model_metrics.json
+            NEW_METRICS_FILE_PATH: new_model_metrics.json
+  
+    - name: Check metrics difference and retrain if needed
+      run: |
+          python trainingnewmodel.py
+
 
     - name: Configure git with my information
       run: |
