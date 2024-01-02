@@ -73,6 +73,7 @@ jobs:
         dvc add data/dummy_sensor_data.csv
         git add .
         git commit -m "Update data" data/dummy_sensor_data.csv.dvc
+        git push
 
     - name: DVC Push
       env:
