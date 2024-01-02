@@ -1,99 +1,115 @@
 import pandas as pd
+import joblib
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+from mlflow_tracking import start_mlflow_run, log_params, log_metrics, log_model
+import mlflow
+import mlflow.sklearn
+
+# Function to preprocess data
+def preprocess_data(file_path, export_csv=False):
+    # Load data
+    df = pd.read_csv(file_path)
+
+    # Convert Timestamp to datetime and extract relevant parts
+    df['Timestamp'] = pd.to_datetime(df['Timestamp'])
+    df['Hour'] = df['Timestamp'].dt.hour
+    df['Day'] = df['Timestamp'].dt.day
+    df['Month'] = df['Timestamp'].dt.month
+
+    # One-hot encoding for categorical variables
+    df_encoded = pd.get_dummies(df, columns=['Machine_ID', 'Sensor_ID'])
+
+    # Drop columns not used in training
+    X = df_encoded.drop(['Reading', 'Timestamp'], axis=1)
+    y = df_encoded['Reading']
+
+    if export_csv:
+        # Export preprocessed data to CSV
+        df_encoded.to_csv('D:\\mlops project\\project\\data\\preprocessed_data.csv', index=False)
+
+    return X, y
+
+# Function to train model
+def train_model(X, y):
+    with mlflow.start_run():
+        # Splitting the dataset
+        X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.3, random_state=42)
+
+        # Feature scaling
+        scaler = StandardScaler()
+        X_train_scaled = scaler.fit_transform(X_train)
+        X_val_scaled = scaler.transform(X_val)
+
+        # Train a Random Forest model
+        model = RandomForestRegressor(random_state=42)
+        model.fit(X_train_scaled, y_train)
+
+        # Log parameters, metrics, and model
+        mlflow.log_params({"model_type": "RandomForestRegressor", "random_state": 42})
+        mlflow.log_metric("mse", mean_squared_error(y_val, model.predict(X_val_scaled)))
+        mlflow.sklearn.log_model(model, "model")
+
+        return model, scaler
+
+def load_model_and_scaler(model_path, scaler_path):
+    model = joblib.load(model_path)
+    scaler = joblib.load(scaler_path)
+    return model, scaler
+
+# Function to make predictions and evaluate the model
+def make_predictions_and_evaluate(model, scaler, X_data, y_true=None):
+    # Scale the features
+    X_scaled = scaler.transform(X_data)
+
+    # Make predictions
+    predictions = model.predict(X_scaled)
+    print("Predictions:", predictions)
+
+    # Evaluate the model if true labels are provided
+    if y_true is not None:
+        mse = mean_squared_error(y_true, predictions)
+        print("Mean Squared Error:", mse)
+        mse = mean_squared_error(y_true, predictions)
+        rmse = mean_squared_error(y_true, predictions, squared=False)
+        mae = mean_absolute_error(y_true, predictions)
+        r2 = r2_score(y_true, predictions)
+
+        print(f"Mean Squared Error (MSE): {mse}")
+        print(f"Root Mean Squared Error (RMSE): {rmse}")
+        print(f"Mean Absolute Error (MAE): {mae}")
+        print(f"R-squared: {r2}")
 
 
-# Load dataset
-df = pd.read_csv('D:\\mlops project\\project\\data\\dummy_sensor_data.csv')
 
-# Parse timestamps
-# Convert 'Timestamp' to datetime
-df['Timestamp'] = pd.to_datetime(df['Timestamp'])
+        
 
-# Extracting additional features from 'Timestamp' (if needed)
-df['Hour'] = df['Timestamp'].dt.hour
-# You can add more features like day of week, month, etc.
 
-# Initialize LabelEncoder
-label_encoder = LabelEncoder()
+if __name__ == "__main__":
+    # File path to your CSV data
+    file_path = 'D:\\mlops project\\project\\data\\dummy_sensor_data.csv'
 
-# Apply Label Encoding to 'Machine_ID' and 'Sensor_ID'
-df['Machine_ID'] = label_encoder.fit_transform(df['Machine_ID'])
-df['Sensor_ID'] = label_encoder.fit_transform(df['Sensor_ID'])
-
-# If 'Reading' is the target variable
-X = df.drop('Reading', axis=1)  # Features
-y = df['Reading']  # Target
-
-# Initialize StandardScaler
-scaler = StandardScaler()
-
-# Select numeric columns to scale
-numeric_cols = ['Hour']  # Add other numeric columns if present
-
-# Apply scaling to numeric columns
-X[numeric_cols] = scaler.fit_transform(X[numeric_cols])
-
-combined_df = pd.concat([X, y.reset_index(drop=True)], axis=1)
-
-combined_df.to_csv('D:\\mlops project\\project\\data\\preprocessed_data.csv', index=False)
-# # Split data into training and remaining data
-X_train, X_remaining, y_train, y_remaining = train_test_split(X, y, test_size=0.3, random_state=42)
-
-# # Split remaining data equally into validation and test set
-X_val, X_test, y_val, y_test = train_test_split(X_remaining, y_remaining, test_size=0.5, random_state=42)
-
-# Start an MLflow run
-with mlflow.start_run():
-
-    # Initialize the XGBoost model
-    model = xgb.XGBRegressor(objective='reg:squarederror')
+    # Preprocess the data and export to CSV
+    X, y = preprocess_data(file_path, export_csv=True)
 
     # Train the model
-    model.fit(X_train, y_train)
+    model, scaler = train_model(X, y)
 
-    # Predict on the test set
-    y_pred = model.predict(X_test)
+    # Save the model and scaler
+    model_path = 'random_forest_model.pkl'
+    scaler_path = 'scaler.pkl'
+    joblib.dump(model, model_path)
+    joblib.dump(scaler, scaler_path)
 
-    # Calculate metrics
-    mse = mean_squared_error(y_test, y_pred)
-    print(f'Mean Squared Error: {mse}')
+    # Load the model and scaler
+    loaded_model, loaded_scaler = load_model_and_scaler(model_path, scaler_path)
 
-    # Log parameters and results
-    mlflow.log_params(model.get_params())
-    mlflow.log_metric('mse', mse)
+    # If you have sample data for predictions and evaluation
+    # X_sample, y_sample = [your sample data]
+    # make_predictions_and_evaluate(loaded_model, loaded_scaler, X_sample, y_sample)
 
-    # Log the model
-    mlflow.xgboost.log_model(model, "model")
-
-
-param_grid = {
-    'max_depth': [3, 6, 10],
-    'learning_rate': [0.01, 0.1, 0.2],
-    # Add other parameters here
-}
-
-grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=3, scoring='neg_mean_squared_error')
-grid_search.fit(X_train, y_train)
-
-best_params = grid_search.best_params_
-best_model = grid_search.best_estimator_
-
-# Log best parameters and model
-mlflow.log_params(best_params)
-mlflow.xgboost.log_model(best_model, "best_model")
-
-model_name = "PredictiveMaintenanceModel"
-mlflow.register_model(model_uri=f"runs:/{mlflow.active_run().info.run_id}/best_model", name=model_name)
-
-# Assuming 'live_data' is your new dataset
-# live_data = ...
-
-live_data_processed = ...  # Apply necessary preprocessing
-
-# Load the model from MLflow
-model_path = f"models:/{model_name}/Production"
-model = mlflow.pyfunc.load_model(model_path)
-
-# Predict on new data
-live_predictions = model.predict(live_data_processed)
+    # For demonstration, using the same data
+    make_predictions_and_evaluate(loaded_model, loaded_scaler, X, y)
+    
