@@ -2,8 +2,6 @@ dvc-gdrive
 dvc
 xgboost
 mlflow
-RandomForestRegressor
-StandardScaler
 scikit-learn
 pandas
 numpy
