@@ -57,6 +57,16 @@ jobs:
       env:
             OLD_METRICS_FILE_PATH: current_model_metrics.json
             NEW_METRICS_FILE_PATH: new_model_metrics.json
+    
+    
+    - name: Stage and Commit Changes
+      run: |
+        git add metrics_difference.log new_model_metrics.json
+        git commit -m "Update metrics logs" || echo "No changes to commit"
+
+    - name: Push Changes
+      run: |
+        git push origin HEAD:main
   
     - name: Check metrics difference and retrain if needed
       run: |
