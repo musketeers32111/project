@@ -4,8 +4,7 @@ on:
   workflow_dispatch:
     
   schedule:
-    - cron: '*/5 * * * *'  # This example runs every 3 minutes, adjust as needed
-    #- cron: '0 * * * *'  # Runs at the start of every hour
+    - cron: '*/5 * * * *'  # Adjust as needed
 
 jobs:
   data-pipeline:
@@ -25,6 +24,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install dvc_gdrive
+        pip install mlflow  # Ensure mlflow is installed
+
+    - name: DVC Pull
+      env:
+        GDRIVE_CREDENTIALS_DATA: ${{ secrets.GOOGLEDRIVE_SECRET }}
+      run: dvc pull
 
     - name: DVC Pull
       env:
@@ -34,11 +39,10 @@ jobs:
     - name: Run data generation script
       run: python scripts/random_data.py
 
-    # - name: Install DVC with GDrive support
-    #   run: pip install 'dvc[gdrive]'
-    
-
-
+    # Run data pre-processing and model training with MLflow tracking
+    - name: Run data pre-processing and model training with MLflow
+      run: python preprocess.py
+      
 
     - name: Configure git with my information
       run: |
