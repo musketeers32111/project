@@ -1,2 +1,4 @@
+dvc-gdrive
+dvc
 pandas
 numpy
