@@ -70,17 +70,14 @@ jobs:
 
     - name: DVC Add & Commit
       run: |
-        dvc add .
-        git commit -m "Update data"
+        dvc add /data/dummy_sensor_data.csv
+        git add .
+        git commit -m "Update data" data/dummy_sensor_data.csv.dvc
 
     - name: DVC Push
       env:
         GDRIVE_CREDENTIALS_DATA: ${{ secrets.GOOGLEDRIVE_SECRET }}
       run: |
-        dvc add data/dummy_sensor_data.csv
-        dvc add data/preprocess_data.csv
-        git add data/dummy_sensor_data.csv.dvc
-        git commit -m "DVC commit for data file"
         dvc push
 
     - name: Push changes to main
