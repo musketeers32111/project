@@ -8,7 +8,7 @@ import sys
 
 def evaluate_and_log_metric(metric_file_path):
     # Load data
-    preprocessed_data = pd.read_csv("D:\\mlops project\\project\\data\\preprocessed_data.csv")
+    preprocessed_data = pd.read_csv("data/preprocessed_data.csv")
 
     # Define features (X) and target variable (y)
     features = preprocessed_data[['Hour', 'Machine_ID', 'Sensor_ID']]
@@ -18,7 +18,7 @@ def evaluate_and_log_metric(metric_file_path):
     X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2, random_state=42, shuffle=False)
 
     # Load the model using MLflow (replace "project/model_selection/" with the actual path)
-    loaded_model = mlflow.sklearn.load_model("D:\\mlops project\\project\\model_selection\\")
+    loaded_model = mlflow.sklearn.load_model("model_selection/")
 
     # Calculate Mean Squared Error
     y_pred = loaded_model.predict(X_test)

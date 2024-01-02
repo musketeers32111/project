@@ -31,18 +31,18 @@ jobs:
         GDRIVE_CREDENTIALS_DATA: ${{ secrets.GOOGLEDRIVE_SECRET }}
       run: dvc pull
 
-    - name: DVC Pull
-      env:
-        GDRIVE_CREDENTIALS_DATA: ${{ secrets.GOOGLEDRIVE_SECRET }}
-      run: dvc pull
-
     - name: Run data generation script
       run: python scripts/random_data.py
 
     # Run data pre-processing and model training with MLflow tracking
     - name: Run data pre-processing and model training with MLflow
       run: python preprocess.py
-      
+
+    # MLflow specific steps (if needed, like setting up MLflow server, etc.)
+    - name: Run Model On Test Data
+      run: |
+        python test.py new_model_metrics.json
+
 
     - name: Configure git with my information
       run: |
@@ -61,8 +61,7 @@ jobs:
       run: dvc push
 
     - name: Push changes to main
-      run: |
-        git push 
+      run: git push 
 
     - name: Open a Pull Request to main branch
       uses: repo-sync/pull-request@v2

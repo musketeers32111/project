@@ -9,7 +9,7 @@ import mlflow.sklearn
 mlflow.set_tracking_uri("http://127.0.0.1:5000")
 
 # Load data
-data = pd.read_csv("D:\\mlops project\\project\\data\\preprocessed_data.csv")
+data = pd.read_csv("data/preprocessed_data.csv")
 
 # Define features (X) and target variable (y)
 X = data[['Hour', 'Machine_ID', 'Sensor_ID']]
