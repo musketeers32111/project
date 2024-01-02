@@ -7,11 +7,11 @@ import json
 import shutil
 
 # Load the shared model using MLflow
-shared_model_path = "D:\\mlops project\\project\\model_selection\\"
+shared_model_path = "model_selection/"
 loaded_shared_model = mlflow.sklearn.load_model(shared_model_path)
 
 # Load data
-data = pd.read_csv("D:\\mlops project\\project\\data\\preprocessed_data.csv")
+data = pd.read_csv("data/preprocessed_data.csv")
 
 # Define features (X) and target variable (y)
 features = data[['Hour', 'Machine_ID', 'Sensor_ID']]
@@ -22,8 +22,8 @@ X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=
 
 # Check if metrics difference exceeds the threshold
 DIFF_THRESHOLD = 0.001
-old_mse_value_path = 'D:\\mlops project\\project\\current_model_metrics.json'
-new_mse_value_path = 'D:\\mlops project\\project\\project\\new_model_metrics.json'
+old_mse_value_path = 'current_model_metrics.json'
+new_mse_value_path = 'new_model_metrics.json'
 
 try:
     with open(old_mse_value_path, 'r') as json_file:
@@ -58,8 +58,8 @@ if metrics_difference > DIFF_THRESHOLD:
     mlflow.sklearn.save_model(loaded_shared_model, "new_model")
     
     # Source and destination paths for model update
-    source_folder = "D:\\mlops project\\project\\new_model\\"
-    destination_folder = "D:\\mlops project\\project\\model_selection\\"
+    source_folder = "new_model/"
+    destination_folder = "model_selection/"
 
     # Copy the contents of the source folder to the destination folder
     shutil.rmtree(destination_folder)  # Remove existing destination folder and its contents

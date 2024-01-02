@@ -5,7 +5,7 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.metrics import mean_squared_error
 
 # Load data from CSV file
-sensor_data = pd.read_csv('D:\\mlops project\\project\\data\\dummy_sensor_data.csv')
+sensor_data = pd.read_csv('data/dummy_sensor_data.csv')
 
 # Convert 'Timestamp' column to datetime format
 sensor_data['Timestamp'] = pd.to_datetime(sensor_data['Timestamp'])
@@ -24,4 +24,4 @@ sensor_data['Sensor_ID'] = label_encoder_sensor.fit_transform(sensor_data['Senso
 data_scaler = StandardScaler()
 sensor_data[['Hour', 'Machine_ID', 'Sensor_ID', 'Reading']] = data_scaler.fit_transform(sensor_data[['Hour', 'Machine_ID', 'Sensor_ID', 'Reading']])
 
-sensor_data.to_csv("D:\\mlops project\\project\\data\\preprocessed_data.csv")
+sensor_data.to_csv("data/preprocessed_data.csv")
