@@ -1,12 +1,9 @@
 dvc-gdrive
 dvc
-<<<<<<< HEAD
 xgboost
 mlflow
 RandomForestRegressor
 StandardScaler
 scikit-learn
-=======
 pandas
 numpy
->>>>>>> 195ab581b98fa50ab05a853f388b12b987f400f3
