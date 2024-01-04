@@ -10,7 +10,7 @@ import shutil
 shared_model_path = "model_selection/"
 loaded_shared_model = mlflow.sklearn.load_model(shared_model_path)
 
-# Load data
+# Loading data
 data = pd.read_csv("data/preprocessed_data.csv")
 
 # Define features (X) and target variable (y)
