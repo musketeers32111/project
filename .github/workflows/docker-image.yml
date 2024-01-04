@@ -1,8 +1,9 @@
 name: Docker Image Image Push
 
 on:
-    schedule:
-      - cron: '0 0 * * *'  # This cron schedule triggers the workflow every day at midnight UTC  
+  push:
+    branches:
+      - main
 
 jobs:
   build:
