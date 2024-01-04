@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 import mlflow.pyfunc
 import pandas as pd
 
-# Initialize Flask app
+# Initializing Flask app
 flask_app = Flask(__name__)
 
 # Path to the MLflow model
