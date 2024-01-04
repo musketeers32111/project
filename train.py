@@ -5,10 +5,10 @@ from sklearn.metrics import mean_squared_error
 import mlflow
 import mlflow.sklearn
 
-# Set MLflow tracking URI
+# Setting MLflow tracking URI
 mlflow.set_tracking_uri("http://127.0.0.1:5000")
 
-# Load data
+# Loading data
 data = pd.read_csv("data/preprocessed_data.csv")
 
 # Define features (X) and target variable (y)
