@@ -7,7 +7,9 @@ import json
 import sys
 
 def evaluate_and_log_metric(metric_file_path):
-    # Loading  data
+  
+    # Loading data
+
     preprocessed_data = pd.read_csv("data/preprocessed_data.csv")
 
     # Defining features (X) and target variable (y)
