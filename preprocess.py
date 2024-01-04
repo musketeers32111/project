@@ -4,7 +4,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.metrics import mean_squared_error
 
-# Load data from CSV file
+# Loading data from CSV file
 sensor_data = pd.read_csv('data/dummy_sensor_data.csv')
 
 # Convert 'Timestamp' column to datetime format
