@@ -33,12 +33,7 @@ def upload_and_predict():
 
             prediction_results = pd.DataFrame(
                 {'Prediction': model_predictions})
-            return render_template('result.html', prediction_results=prediction_results.to_html())
-
-
-            prediction_results = pd.DataFrame({'Prediction': model_predictions})
             return render_template('prediction.html', prediction_results=prediction_results.to_html())
-    
 
     return render_template('index.html')
 
