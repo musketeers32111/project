@@ -6,7 +6,7 @@ from sklearn.metrics import mean_squared_error
 import json
 import shutil
 
-# Load the shared model using MLflow
+# Loading the shared model using MLflow
 shared_model_path = "model_selection/"
 loaded_shared_model = mlflow.sklearn.load_model(shared_model_path)
 
